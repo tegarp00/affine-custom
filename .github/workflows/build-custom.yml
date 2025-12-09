@@ -1,0 +1,39 @@
+name: Build Custom Images
+
+on:
+  workflow_dispatch:
+    inputs:
+      build-type:
+        description: 'Build type'
+        required: true
+        default: 'beta'
+      app-version:
+        description: 'App version'
+        required: true
+        default: '0.25.5-custom'
+
+jobs:
+  prepare:
+    name: Prepare Build
+    runs-on: ubuntu-latest
+    outputs:
+      APP_VERSION: ${{ steps.prepare.outputs.APP_VERSION }}
+      GIT_SHORT_HASH: ${{ steps.prepare.outputs.GIT_SHORT_HASH }}
+      BUILD_TYPE: ${{ inputs.build-type }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get Git Hash
+        id: prepare
+        run: |
+          echo "APP_VERSION=${{ inputs.app-version }}" >> $GITHUB_OUTPUT  
+          echo "GIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build Images
+    needs: prepare
+    uses: ./.github/workflows/build-images.yml
+    with:
+      build-type: ${{ needs.prepare.outputs.BUILD_TYPE }}
+      app-version: ${{ needs.prepare.outputs.APP_VERSION }}
+      git-short-hash: ${{ needs.prepare.outputs.GIT_SHORT_HASH }}
+    secrets: inherit
