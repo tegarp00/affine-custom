@@ -12,6 +12,11 @@ on:
         required: true
         default: '0.25.5-custom'
 
+permissions:
+  contents: 'write'
+  id-token: 'write'
+  packages: 'write'
+
 jobs:
   prepare:
     name: Prepare Build
