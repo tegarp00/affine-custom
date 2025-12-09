@@ -87,6 +87,14 @@ export const TagDetail = ({ tagId }: { tagId?: string }) => {
             value: tagId,
           },
         ],
+        extraFilters: [
+          {
+            type: 'system',
+            key: 'permission',
+            method: 'is',
+            value: 'true',
+          },
+        ],
         groupBy,
         orderBy,
       })

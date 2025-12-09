@@ -3,9 +3,10 @@ import type { Framework } from '@toeverything/infra';
 import { DocsService } from '../doc';
 import { DocsSearchService } from '../docs-search';
 import { FavoriteService } from '../favorite';
+import { GuardService } from '../permissions';
 import { ShareDocsListService } from '../share-doc';
 import { TagService } from '../tag';
-import { WorkspaceScope } from '../workspace';
+import { WorkspaceScope, WorkspaceService } from '../workspace';
 import { WorkspacePropertyService } from '../workspace-property';
 import { CheckboxPropertyFilterProvider } from './impls/filters/checkbox';
 import { CreatedAtFilterProvider } from './impls/filters/created-at';
@@ -19,6 +20,7 @@ import { IntegrationTypeFilterProvider } from './impls/filters/integration-type'
 import { JournalFilterProvider } from './impls/filters/journal';
 import { NumberPropertyFilterProvider } from './impls/filters/number';
 import { PageWidthFilterProvider } from './impls/filters/page-width';
+import { PermissionFilterProvider } from './impls/filters/permission';
 import { PropertyFilterProvider } from './impls/filters/property';
 import { SharedFilterProvider } from './impls/filters/shared';
 import { SystemFilterProvider } from './impls/filters/system';
@@ -150,6 +152,11 @@ export function configureCollectionRulesModule(framework: Framework) {
     .impl(FilterProvider('system:shared'), SharedFilterProvider, [
       ShareDocsListService,
       DocsService,
+    ])
+    .impl(FilterProvider('system:permission'), PermissionFilterProvider, [
+      GuardService,
+      DocsService,
+      WorkspaceService,
     ])
     .impl(FilterProvider('system:title'), TitleFilterProvider, [
       DocsSearchService,

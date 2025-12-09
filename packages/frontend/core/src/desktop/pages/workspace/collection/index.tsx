@@ -81,6 +81,12 @@ export const CollectionDetail = ({
             method: 'is',
             value: 'false',
           },
+          {
+            type: 'system',
+            key: 'permission',
+            method: 'is',
+            value: 'true',
+          },
         ],
       })
       .subscribe({

@@ -133,6 +133,12 @@ export const SelectPage = memo(function SelectPage({
             method: 'is',
             value: 'false',
           },
+          {
+            type: 'system',
+            key: 'permission',
+            method: 'is',
+            value: 'true',
+          },
         ],
         orderBy: {
           type: 'system',
