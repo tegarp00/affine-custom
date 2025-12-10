@@ -25,6 +25,7 @@ jobs:
       APP_VERSION: ${{ steps.prepare.outputs.APP_VERSION }}
       GIT_SHORT_HASH: ${{ steps.prepare.outputs.GIT_SHORT_HASH }}
       BUILD_TYPE: ${{ inputs.build-type }}
+      PUBLIC_PATH: ${{ steps.prepare.outputs.PUBLIC_PATH }}
     steps:
       - uses: actions/checkout@v4
       - name: Get Git Hash
@@ -32,6 +33,7 @@ jobs:
         run: |
           echo "APP_VERSION=${{ inputs.app-version }}" >> $GITHUB_OUTPUT  
           echo "GIT_SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "PUBLIC_PATH=/" >> $GITHUB_OUTPUT
 
   build:
     name: Build Images
@@ -41,4 +43,5 @@ jobs:
       build-type: ${{ needs.prepare.outputs.BUILD_TYPE }}
       app-version: ${{ needs.prepare.outputs.APP_VERSION }}
       git-short-hash: ${{ needs.prepare.outputs.GIT_SHORT_HASH }}
+      public-path: ${{ needs.prepare.outputs.PUBLIC_PATH }}
     secrets: inherit

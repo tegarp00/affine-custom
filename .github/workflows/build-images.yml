@@ -12,6 +12,10 @@ on:
       git-short-hash:
         type: string
         required: true
+      public-path:
+        type: string
+        required: false
+        default: '/'
 
 permissions:
   contents: 'write'
@@ -34,6 +38,7 @@ jobs:
       - name: Build Core
         run: yarn affine @affine/web build
         env:
+          PUBLIC_PATH: ${{ inputs.public-path }}
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
