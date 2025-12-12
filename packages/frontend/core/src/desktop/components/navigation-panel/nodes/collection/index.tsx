@@ -5,6 +5,7 @@ import {
   MenuItem,
   toast,
 } from '@affine/component';
+import { Guard } from '@affine/core/components/guard';
 import {
   type Collection,
   CollectionService,
@@ -12,6 +13,7 @@ import {
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { GlobalContextService } from '@affine/core/modules/global-context';
 import { NavigationPanelService } from '@affine/core/modules/navigation-panel';
+import { WorkspaceService } from '@affine/core/modules/workspace';
 import type { AffineDNDData } from '@affine/core/types/dnd';
 import { useI18n } from '@affine/i18n';
 import { track } from '@affine/track';
@@ -250,8 +252,9 @@ const NavigationPanelCollectionNodeChildren = ({
   path: string[];
 }) => {
   const t = useI18n();
-  const { collectionService } = useServices({
+  const { collectionService, workspaceService } = useServices({
     CollectionService,
+    WorkspaceService,
   });
 
   const allowList = useLiveData(
@@ -277,33 +280,72 @@ const NavigationPanelCollectionNodeChildren = ({
     return () => subscription.unsubscribe();
   }, [collection]);
 
+  // For local workspaces, show all docs
+  if (workspaceService.workspace.flavour === 'local') {
+    return filteredDocIds.map(docId => (
+      <NavigationPanelDocNode
+        key={docId}
+        docId={docId}
+        reorderable={false}
+        location={{
+          at: 'navigation-panel:collection:filtered-docs',
+          collectionId: collection.id,
+        }}
+        parentPath={path}
+        operations={
+          allowList.has(docId)
+            ? [
+                {
+                  index: 99,
+                  view: (
+                    <MenuItem
+                      prefixIcon={<FilterMinusIcon />}
+                      onClick={() => handleRemoveFromAllowList(docId)}
+                    >
+                      {t['Remove special filter']()}
+                    </MenuItem>
+                  ),
+                },
+              ]
+            : []
+        }
+      />
+    ));
+  }
+
+  // For cloud workspaces, filter by permission
   return filteredDocIds.map(docId => (
-    <NavigationPanelDocNode
-      key={docId}
-      docId={docId}
-      reorderable={false}
-      location={{
-        at: 'navigation-panel:collection:filtered-docs',
-        collectionId: collection.id,
-      }}
-      parentPath={path}
-      operations={
-        allowList.has(docId)
-          ? [
-              {
-                index: 99,
-                view: (
-                  <MenuItem
-                    prefixIcon={<FilterMinusIcon />}
-                    onClick={() => handleRemoveFromAllowList(docId)}
-                  >
-                    {t['Remove special filter']()}
-                  </MenuItem>
-                ),
-              },
-            ]
-          : []
+    <Guard key={docId} docId={docId} permission="Doc_Read">
+      {canRead =>
+        canRead ? (
+          <NavigationPanelDocNode
+            docId={docId}
+            reorderable={false}
+            location={{
+              at: 'navigation-panel:collection:filtered-docs',
+              collectionId: collection.id,
+            }}
+            parentPath={path}
+            operations={
+              allowList.has(docId)
+                ? [
+                    {
+                      index: 99,
+                      view: (
+                        <MenuItem
+                          prefixIcon={<FilterMinusIcon />}
+                          onClick={() => handleRemoveFromAllowList(docId)}
+                        >
+                          {t['Remove special filter']()}
+                        </MenuItem>
+                      ),
+                    },
+                  ]
+                : []
+            }
+          />
+        ) : null
       }
-    />
+    </Guard>
   ));
 };

@@ -14,13 +14,19 @@
       content="black-translucent"
     />
 
-    <title>AFFiNE</title>
+    <title>simpleFINE</title>
     <meta name="theme-color" content="#fafafa" />
     <%= PRECONNECT %>
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" sizes="192x192" href="/favicon-192.png" />
-    <link rel="shortcut icon" href="/favicon.ico?v=2" />
+    <link rel="manifest" href="/manifest.json?v=3" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=3" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=3" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/imgs/simple_fine.png?v=3"
+    />
+    <link rel="icon" sizes="192x192" href="/imgs/simple_fine.png?v=3" />
+    <link rel="icon" type="image/png" href="/imgs/simple_fine.png?v=3" />
     <meta name="emotion-insertion-point" content="" />
     <meta property="description" content="<%= DESCRIPTION %>" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -44,5 +50,79 @@
 
   <body>
     <div id="app" data-version="<%= GIT_SHORT_SHA %>"></div>
+    <script>
+      // Set title and favicon immediately on page load - aggressive approach
+      document.title = 'simpleFINE';
+      (function () {
+        var timestamp = '?v=' + Date.now();
+        // Remove ALL existing favicon links multiple times
+        for (var i = 0; i < 3; i++) {
+          var existingLinks = document.querySelectorAll(
+            "link[rel*='icon'], link[rel='shortcut icon']"
+          );
+          existingLinks.forEach(function (link) {
+            try {
+              link.remove();
+            } catch (e) {}
+          });
+        }
+
+        // Create multiple favicon links to ensure browser picks it up
+        // Prioritize favicon.ico first (most important for browsers)
+        var faviconTypes = [
+          {
+            rel: 'icon',
+            type: 'image/x-icon',
+            href: '/favicon.ico' + timestamp,
+          },
+          {
+            rel: 'shortcut icon',
+            type: 'image/x-icon',
+            href: '/favicon.ico' + timestamp,
+          },
+          {
+            rel: 'icon',
+            type: 'image/png',
+            href: '/imgs/simple_fine.png' + timestamp,
+          },
+          {
+            rel: 'apple-touch-icon',
+            href: '/imgs/simple_fine.png' + timestamp,
+          },
+        ];
+
+        faviconTypes.forEach(function (config) {
+          var link = document.createElement('link');
+          link.rel = config.rel;
+          if (config.type) link.type = config.type;
+          link.href = config.href;
+          document.head.appendChild(link);
+        });
+
+        // Also try to update favicon via canvas (fallback for stubborn browsers)
+        setTimeout(function () {
+          var img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = function () {
+            try {
+              var canvas = document.createElement('canvas');
+              canvas.width = 32;
+              canvas.height = 32;
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, 32, 32);
+              var link =
+                document.querySelector("link[rel*='icon']") ||
+                document.createElement('link');
+              link.rel = 'icon';
+              link.href = canvas.toDataURL();
+              if (!document.querySelector("link[rel*='icon']")) {
+                document.head.appendChild(link);
+              }
+            } catch (e) {}
+          };
+          img.src = '/imgs/simple_fine.png' + timestamp;
+        }, 100);
+      })();
+    </script>
   </body>
 </html>

@@ -150,8 +150,8 @@ export class DocRendererController {
     }
 
     const title = opts?.title
-      ? htmlSanitize(`${opts.title} | AFFiNE`)
-      : 'AFFiNE';
+      ? htmlSanitize(`${opts.title} - simpleFINE`)
+      : 'simpleFINE';
     const summary = opts ? htmlSanitize(opts.summary) : assets.description;
     const image = opts?.avatar ?? 'https://affine.pro/og.jpeg';
 
@@ -177,9 +177,10 @@ export class DocRendererController {
     <meta name="theme-color" content="#fafafa" />
     ${assets.publicPath.startsWith('/') ? '' : `<link rel="preconnect" href="${assets.publicPath}" />`}
     <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="icon" sizes="192x192" href="/favicon-192.png" />
-    <link rel="shortcut icon" href="/favicon.ico?v=2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/imgs/simple_fine.png" />
+    <link rel="icon" sizes="192x192" href="/imgs/simple_fine.png" />
+    <link rel="shortcut icon" href="/imgs/simple_fine.png" />
+    <link rel="icon" type="image/png" href="/imgs/simple_fine.png" />
     <meta name="emotion-insertion-point" content="" />
     ${!opts ? '<meta name="robots" content="noindex, nofollow" />' : ''}
     <meta

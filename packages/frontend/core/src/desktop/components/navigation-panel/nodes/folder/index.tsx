@@ -10,6 +10,7 @@ import {
   notify,
 } from '@affine/component';
 import { usePageHelper } from '@affine/core/blocksuite/block-suite-page-list/utils';
+import { Guard } from '@affine/core/components/guard';
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { CompatibleFavoriteItemsAdapter } from '@affine/core/modules/favorite';
 import { FeatureFlagService } from '@affine/core/modules/feature-flag';
@@ -48,6 +49,79 @@ import { NavigationPanelTagNode } from '../tag';
 import type { GenericNavigationPanelNode } from '../types';
 import { FolderEmpty } from './empty';
 import { FavoriteFolderOperation } from './operations';
+
+// Component to filter folder children based on permission
+const FilteredFolderChild = ({
+  child,
+  workspaceService,
+  newFolderId,
+  handleDropOnChildren,
+  childrenOperations,
+  handleDropEffectOnChildren,
+  handleChildrenCanDrop,
+  path,
+}: {
+  child: FolderNode;
+  workspaceService: WorkspaceService;
+  newFolderId: string | null;
+  handleDropOnChildren: (
+    data: DropTargetDropEvent<AffineDNDData>,
+    dropAtNode?: FolderNode
+  ) => void;
+  childrenOperations: (type: string, node: FolderNode) => NodeOperation[];
+  handleDropEffectOnChildren: NavigationPanelTreeNodeDropEffect;
+  handleChildrenCanDrop: DropTargetOptions<AffineDNDData>['canDrop'];
+  path: string[];
+}) => {
+  const childType = useLiveData(child.type$);
+  const childData = useLiveData(child.data$);
+
+  // For local workspaces or non-doc children, always show
+  if (
+    workspaceService.workspace.flavour === 'local' ||
+    childType !== 'doc' ||
+    !childData
+  ) {
+    return (
+      <NavigationPanelFolderNode
+        nodeId={child.id as string}
+        defaultRenaming={child.id === newFolderId}
+        onDrop={handleDropOnChildren}
+        operations={childrenOperations}
+        dropEffect={handleDropEffectOnChildren}
+        canDrop={handleChildrenCanDrop}
+        location={{
+          at: 'navigation-panel:organize:folder-node',
+          nodeId: child.id as string,
+        }}
+        parentPath={path}
+      />
+    );
+  }
+
+  // For doc children, check permission before showing
+  return (
+    <Guard docId={childData} permission="Doc_Read">
+      {canRead =>
+        canRead ? (
+          <NavigationPanelFolderNode
+            nodeId={child.id as string}
+            defaultRenaming={child.id === newFolderId}
+            onDrop={handleDropOnChildren}
+            operations={childrenOperations}
+            dropEffect={handleDropEffectOnChildren}
+            canDrop={handleChildrenCanDrop}
+            location={{
+              at: 'navigation-panel:organize:folder-node',
+              nodeId: child.id as string,
+            }}
+            parentPath={path}
+          />
+        ) : null
+      }
+    </Guard>
+  );
+};
 
 export const NavigationPanelFolderNode = ({
   nodeId,
@@ -814,19 +888,16 @@ const NavigationPanelFolderNodeFolder = ({
       explorerIconConfig={node.id ? { where: 'folder', id: node.id } : null}
     >
       {children.map(child => (
-        <NavigationPanelFolderNode
+        <FilteredFolderChild
           key={child.id}
-          nodeId={child.id as string}
-          defaultRenaming={child.id === newFolderId}
-          onDrop={handleDropOnChildren}
-          operations={childrenOperations}
-          dropEffect={handleDropEffectOnChildren}
-          canDrop={handleChildrenCanDrop}
-          location={{
-            at: 'navigation-panel:organize:folder-node',
-            nodeId: child.id as string,
-          }}
-          parentPath={path}
+          child={child}
+          workspaceService={workspaceService}
+          newFolderId={newFolderId}
+          handleDropOnChildren={handleDropOnChildren}
+          childrenOperations={childrenOperations}
+          handleDropEffectOnChildren={handleDropEffectOnChildren}
+          handleChildrenCanDrop={handleChildrenCanDrop}
+          path={path}
         />
       ))}
     </NavigationPanelTreeNode>

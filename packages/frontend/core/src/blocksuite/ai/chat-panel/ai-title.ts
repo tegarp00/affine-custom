@@ -172,7 +172,7 @@ export class AIChatPanelTitle extends SignalWatcher(
             ? html`<span data-testid="chat-panel-embedding-progress"
                 >Embedding ${done}/${total}</span
               >`
-            : 'AFFiNE AI'}
+            : 'simpleFine AI'}
         </div>
         ${this.playgroundConfig.visible.value
           ? html`

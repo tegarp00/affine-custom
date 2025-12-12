@@ -4,7 +4,10 @@ import { WorkspacesService } from '@affine/core/modules/workspace';
 import {
   buildShowcaseWorkspace,
   createFirstAppData,
+  DEMO_WORKSPACE_STORAGE_KEY,
+  SKIP_DEMO_WORKSPACE_KEY,
 } from '@affine/core/utils/first-app-data';
+import { DEFAULT_WORKSPACE_NAME } from '@affine/env/constant';
 import { ServerFeature } from '@affine/graphql';
 import {
   useLiveData,
@@ -47,9 +50,11 @@ export const Component = ({
   // navigating and creating may be slow, to avoid flickering, we show workspace fallback
   const [navigating, setNavigating] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
   const authService = useService(AuthService);
   const defaultServerService = useService(DefaultServerService);
 
+  const sessionStatus = useLiveData(authService.session.status$);
   const loggedIn = useLiveData(
     authService.session.status$.map(s => s === 'authenticated')
   );
@@ -65,11 +70,41 @@ export const Component = ({
   const workspacesService = useService(WorkspacesService);
   const list = useLiveData(workspacesService.list.workspaces$);
   const listIsLoading = useLiveData(workspacesService.list.isRevalidating$);
+  const demoWorkspaceId =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem(DEMO_WORKSPACE_STORAGE_KEY)
+      : null;
+  const availableWorkspaces =
+    loggedIn && demoWorkspaceId
+      ? list.filter(workspace => workspace.id !== demoWorkspaceId)
+      : list;
 
   const { openPage, jumpToPage, jumpToSignIn } = useNavigateHelper();
   const [searchParams] = useSearchParams();
 
+  // Set title and favicon for home page
+  useEffect(() => {
+    document.title = 'simpleFINE';
+
+    // Remove existing favicon links
+    const existingLinks = document.querySelectorAll("link[rel*='icon']");
+    existingLinks.forEach(link => link.remove());
+
+    // Create new favicon links for better browser compatibility
+    const faviconLink = document.createElement('link');
+    faviconLink.rel = 'icon';
+    faviconLink.type = 'image/png';
+    faviconLink.href = '/imgs/simple_fine.png';
+    document.getElementsByTagName('head')[0].appendChild(faviconLink);
+
+    const appleTouchIcon = document.createElement('link');
+    appleTouchIcon.rel = 'apple-touch-icon';
+    appleTouchIcon.href = '/imgs/simple_fine.png';
+    document.getElementsByTagName('head')[0].appendChild(appleTouchIcon);
+  }, []);
+
   const createOnceRef = useRef(false);
+  const openedOnceRef = useRef(false);
 
   const createCloudWorkspace = useCallback(() => {
     if (createOnceRef.current) return;
@@ -91,6 +126,10 @@ export const Component = ({
       return;
     }
 
+    if (creating) {
+      return;
+    }
+
     if (listIsLoading) {
       return;
     }
@@ -104,33 +143,37 @@ export const Component = ({
     // check is user logged in && has cloud workspace
     if (searchParams.get('initCloud') === 'true') {
       if (loggedIn) {
-        if (list.every(w => w.flavour !== 'affine-cloud')) {
+        if (availableWorkspaces.every(w => w.flavour !== 'affine-cloud')) {
           createCloudWorkspace();
           return;
         }
 
         // open first cloud workspace
         const openWorkspace =
-          list.find(w => w.flavour === 'affine-cloud') ?? list[0];
+          availableWorkspaces.find(w => w.flavour === 'affine-cloud') ??
+          availableWorkspaces[0];
         openPage(openWorkspace.id, defaultIndexRoute);
       } else {
         return;
       }
     } else {
-      if (list.length === 0) {
+      if (availableWorkspaces.length === 0) {
         setNavigating(false);
         return;
       }
       // open last workspace
       const lastId = localStorage.getItem('last_workspace_id');
 
-      const openWorkspace = list.find(w => w.id === lastId) ?? list[0];
+      const openWorkspace =
+        availableWorkspaces.find(w => w.id === lastId) ??
+        availableWorkspaces[0];
       openPage(openWorkspace.id, defaultIndexRoute, RouteLogic.REPLACE);
     }
   }, [
     enableLocalWorkspace,
+    availableWorkspaces,
+    creating,
     createCloudWorkspace,
-    list,
     openPage,
     searchParams,
     jumpToSignIn,
@@ -140,14 +183,72 @@ export const Component = ({
     defaultIndexRoute,
   ]);
 
+  useEffect(() => {
+    if (openedOnceRef.current) {
+      return;
+    }
+    if (creating) {
+      return;
+    }
+    if (listIsLoading) {
+      return;
+    }
+    if (availableWorkspaces.length === 0) {
+      return;
+    }
+    openedOnceRef.current = true;
+    const lastId = localStorage.getItem('last_workspace_id');
+    const openWorkspace =
+      availableWorkspaces.find(w => w.id === lastId) ?? availableWorkspaces[0];
+    openPage(openWorkspace.id, defaultIndexRoute, RouteLogic.REPLACE);
+  }, [
+    availableWorkspaces,
+    creating,
+    defaultIndexRoute,
+    listIsLoading,
+    openPage,
+  ]);
+
   const desktopApi = useServiceOptional(DesktopApiService);
+
+  useEffect(() => {
+    let disposed = false;
+    authService.session
+      .waitForRevalidation()
+      .catch(err => console.error('Auth revalidation failed', err))
+      .finally(() => {
+        if (!disposed) {
+          setSessionReady(true);
+        }
+      });
+    return () => {
+      disposed = true;
+    };
+  }, [authService]);
+
+  useEffect(() => {
+    if (sessionStatus === 'authenticated') {
+      localStorage.setItem(SKIP_DEMO_WORKSPACE_KEY, 'true');
+    }
+    if (sessionStatus === 'unauthenticated') {
+      localStorage.removeItem('last_workspace_id');
+    }
+  }, [sessionStatus]);
 
   useEffect(() => {
     desktopApi?.handler.ui.pingAppLayoutReady().catch(console.error);
   }, [desktopApi]);
 
   useEffect(() => {
-    if (listIsLoading || list.length > 0 || !enableLocalWorkspace) {
+    if (
+      listIsLoading ||
+      availableWorkspaces.length > 0 ||
+      !enableLocalWorkspace ||
+      !sessionReady ||
+      localStorage.getItem(SKIP_DEMO_WORKSPACE_KEY) === 'true' ||
+      sessionStatus !== 'unauthenticated' ||
+      loggedIn
+    ) {
       return;
     }
 
@@ -177,9 +278,88 @@ export const Component = ({
     workspacesService,
     loggedIn,
     listIsLoading,
-    list,
+    availableWorkspaces,
     enableLocalWorkspace,
   ]);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
+
+    if (listIsLoading) {
+      return;
+    }
+
+    if (!demoWorkspaceId) {
+      return;
+    }
+
+    const demoWorkspace = list.find(w => w.id === demoWorkspaceId);
+    if (!demoWorkspace) {
+      // keep the key until list is loaded so we can retry deletion when data arrives
+      if (!listIsLoading && list.length > 0) {
+        localStorage.removeItem(DEMO_WORKSPACE_STORAGE_KEY);
+      }
+      return;
+    }
+
+    setCreating(true);
+    workspacesService
+      .deleteWorkspace(demoWorkspace)
+      .catch(err => {
+        console.error('Failed to remove demo workspace', err);
+      })
+      .finally(() => {
+        localStorage.removeItem(DEMO_WORKSPACE_STORAGE_KEY);
+        setCreating(false);
+      });
+  }, [demoWorkspaceId, list, listIsLoading, loggedIn, workspacesService]);
+
+  useEffect(() => {
+    if (!loggedIn) {
+      return;
+    }
+
+    if (listIsLoading) {
+      return;
+    }
+
+    const localWorkspaces = list.filter(
+      workspace => workspace.flavour === 'local'
+    );
+    if (localWorkspaces.length === 0) {
+      return;
+    }
+
+    setCreating(true);
+    (async () => {
+      for (const workspaceMeta of localWorkspaces) {
+        try {
+          const { workspace, dispose } = workspacesService.open({
+            metadata: workspaceMeta,
+          });
+          await workspace.engine.doc.waitForDocReady(workspaceMeta.id);
+          const name =
+            workspace.docCollection?.doc?.getMap('meta')?.get('name') ?? '';
+
+          if (name === DEFAULT_WORKSPACE_NAME) {
+            await workspacesService.deleteWorkspace(workspaceMeta);
+          }
+
+          dispose();
+        } catch (err) {
+          console.error('Failed to remove local demo workspace', err);
+        }
+      }
+    })()
+      .catch(err => {
+        console.error('Unexpected error while cleaning demo workspace', err);
+      })
+      .finally(() => {
+        setCreating(false);
+      });
+  }, [list, listIsLoading, loggedIn, workspacesService]);
 
   if (navigating || creating) {
     return fallback ?? <AppContainer fallback />;

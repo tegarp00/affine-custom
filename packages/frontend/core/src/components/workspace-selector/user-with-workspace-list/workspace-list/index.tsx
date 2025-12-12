@@ -172,14 +172,6 @@ const CloudWorkSpaceList = ({
 
   return (
     <>
-      <WorkspaceServerInfo
-        server={server.id}
-        name={serverName}
-        account={account}
-        accountStatus={accountStatus}
-        onDeleteServer={handleDeleteServer}
-        onSignOut={handleSignOut}
-      />
       {accountStatus === 'unauthenticated' ? (
         <MenuItem key="sign-in" onClick={handleSignIn}>
           <div className={styles.signInMenuItemContent}>
@@ -195,6 +187,16 @@ const CloudWorkSpaceList = ({
         onClick={onClickWorkspace}
         onEnableCloudClick={onClickEnableCloud}
       />
+      {accountStatus === 'authenticated' ? (
+        <MenuItem key="sign-out" onClick={handleSignOut}>
+          <div className={styles.signInMenuItemContent}>
+            <div className={styles.signInIconWrapper}>
+              <AccountIcon />
+            </div>
+            <div className={styles.signInText}>{t['Sign out']()}</div>
+          </div>
+        </MenuItem>
+      ) : null}
     </>
   );
 };

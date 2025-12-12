@@ -27,6 +27,27 @@ export const SignIn = ({
   const server = searchParams.get('server') ?? undefined;
   const error = searchParams.get('error');
 
+  // Set title and favicon
+  useEffect(() => {
+    document.title = 'simpleFINE';
+
+    // Remove existing favicon links
+    const existingLinks = document.querySelectorAll("link[rel*='icon']");
+    existingLinks.forEach(link => link.remove());
+
+    // Create new favicon links for better browser compatibility
+    const faviconLink = document.createElement('link');
+    faviconLink.rel = 'icon';
+    faviconLink.type = 'image/png';
+    faviconLink.href = '/imgs/simple_fine.png';
+    document.getElementsByTagName('head')[0].appendChild(faviconLink);
+
+    const appleTouchIcon = document.createElement('link');
+    appleTouchIcon.rel = 'apple-touch-icon';
+    appleTouchIcon.href = '/imgs/simple_fine.png';
+    document.getElementsByTagName('head')[0].appendChild(appleTouchIcon);
+  }, []);
+
   useEffect(() => {
     if (error) {
       notify.error({

@@ -67,8 +67,14 @@ export async function buildShowcaseWorkspace(
 
 const logger = new DebugLogger('createFirstAppData');
 
+export const DEMO_WORKSPACE_STORAGE_KEY = 'demo_workspace_id';
+export const SKIP_DEMO_WORKSPACE_KEY = 'skip_demo_workspace';
+
 export async function createFirstAppData(workspacesService: WorkspacesService) {
-  if (localStorage.getItem('is-first-open') !== null) {
+  if (
+    localStorage.getItem('is-first-open') !== null ||
+    localStorage.getItem(SKIP_DEMO_WORKSPACE_KEY) === 'true'
+  ) {
     return;
   }
   localStorage.setItem('is-first-open', 'false');
@@ -77,6 +83,7 @@ export async function createFirstAppData(workspacesService: WorkspacesService) {
     'local',
     DEFAULT_WORKSPACE_NAME
   );
+  localStorage.setItem(DEMO_WORKSPACE_STORAGE_KEY, meta.id);
   logger.info('create first workspace', defaultDocId);
   return { meta, defaultPageId: defaultDocId };
 }

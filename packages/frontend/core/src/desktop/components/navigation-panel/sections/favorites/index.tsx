@@ -4,6 +4,7 @@ import {
   useDropTarget,
 } from '@affine/component';
 import { usePageHelper } from '@affine/core/blocksuite/block-suite-page-list/utils';
+import { Guard } from '@affine/core/components/guard';
 import type { FavoriteSupportTypeUnion } from '@affine/core/modules/favorite';
 import {
   FavoriteService,
@@ -237,16 +238,39 @@ const NavigationPanelFavoriteNode = ({
     },
     [favorite, onDrop]
   );
+  const { workspaceService } = useServices({
+    WorkspaceService,
+  });
+
   return favorite.type === 'doc' ? (
-    <NavigationPanelDocNode
-      key={favorite.id}
-      docId={favorite.id}
-      location={childLocation}
-      onDrop={handleOnChildrenDrop}
-      dropEffect={favoriteChildrenDropEffect}
-      canDrop={favoriteChildrenCanDrop}
-      parentPath={parentPath}
-    />
+    // For local workspaces, show all favorite docs
+    workspaceService.workspace.flavour === 'local' ? (
+      <NavigationPanelDocNode
+        key={favorite.id}
+        docId={favorite.id}
+        location={childLocation}
+        onDrop={handleOnChildrenDrop}
+        dropEffect={favoriteChildrenDropEffect}
+        canDrop={favoriteChildrenCanDrop}
+        parentPath={parentPath}
+      />
+    ) : (
+      // For cloud workspaces, filter by permission
+      <Guard key={favorite.id} docId={favorite.id} permission="Doc_Read">
+        {canRead =>
+          canRead ? (
+            <NavigationPanelDocNode
+              docId={favorite.id}
+              location={childLocation}
+              onDrop={handleOnChildrenDrop}
+              dropEffect={favoriteChildrenDropEffect}
+              canDrop={favoriteChildrenCanDrop}
+              parentPath={parentPath}
+            />
+          ) : null
+        }
+      </Guard>
+    )
   ) : favorite.type === 'tag' ? (
     <NavigationPanelTagNode
       key={favorite.id}

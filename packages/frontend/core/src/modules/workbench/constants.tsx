@@ -13,7 +13,15 @@ import {
 import type { ReactNode } from 'react';
 
 export const iconNameToIcon = {
-  allDocs: <AllDocsIcon />,
+  allDocs: (
+    <img
+      src="/imgs/simple_fine.png"
+      alt="simpleFine Logo"
+      width={20}
+      height={20}
+      style={{ display: 'block' }}
+    />
+  ),
   collection: <ViewLayersIcon />,
   doc: <PageIcon />,
   page: <PageIcon />,
