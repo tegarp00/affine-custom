@@ -107,7 +107,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step1',
     action: 'workflow:presentation:step1',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     config: { temperature: 0.7 },
     messages: [
       {
@@ -124,7 +124,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step2',
     action: 'workflow:presentation:step2',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -143,7 +143,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:presentation:step4',
     action: 'workflow:presentation:step4',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -170,7 +170,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:brainstorm:step1',
     action: 'workflow:brainstorm:step1',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     config: { temperature: 0.7 },
     messages: [
       {
@@ -187,7 +187,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:brainstorm:step2',
     action: 'workflow:brainstorm:step2',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     config: {
       frequencyPenalty: 0.5,
       presencePenalty: 0.5,
@@ -221,7 +221,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-sketch:step2',
     action: 'workflow:image-sketch:step2',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -262,7 +262,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-clay:step2',
     action: 'workflow:image-clay:step2',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -303,7 +303,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-anime:step2',
     action: 'workflow:image-anime:step2',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -344,7 +344,7 @@ const workflows: Prompt[] = [
   {
     name: 'workflow:image-pixel:step2',
     action: 'workflow:image-pixel:step2',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -380,7 +380,7 @@ const textActions: Prompt[] = [
   {
     name: 'Transcript audio',
     action: 'Transcript audio',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     optionalModels: ['gemini-2.5-flash', 'gemini-2.5-pro'],
     messages: [
       {
@@ -417,7 +417,7 @@ Convert a multi-speaker audio recording into a structured JSON format by transcr
   {
     name: 'Rerank results',
     action: 'Rerank results',
-    model: 'gpt-4.1',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -432,7 +432,7 @@ Convert a multi-speaker audio recording into a structured JSON format by transcr
   {
     name: 'Generate a caption',
     action: 'Generate a caption',
-    model: 'gpt-5-mini',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'user',
@@ -448,7 +448,7 @@ Convert a multi-speaker audio recording into a structured JSON format by transcr
   {
     name: 'Conversation Summary',
     action: 'Conversation Summary',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -473,7 +473,7 @@ Return only the summary text—no headings, labels, or commentary.`,
   {
     name: 'Summary',
     action: 'Summary',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -504,7 +504,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Summary as title',
     action: 'Summary as title',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -521,7 +521,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Summary the webpage',
     action: 'Summary the webpage',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'user',
@@ -533,7 +533,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Explain this',
     action: 'Explain this',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -576,7 +576,7 @@ A concise paragraph that captures the article's main argument and key conclusion
   {
     name: 'Explain this image',
     action: 'Explain this image',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -597,7 +597,7 @@ A concise paragraph that captures the article's main argument and key conclusion
   {
     name: 'Explain this code',
     action: 'Explain this code',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -648,7 +648,7 @@ A concise paragraph that captures the article's main argument and key conclusion
   {
     name: 'Translate to',
     action: 'Translate',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -727,7 +727,7 @@ You are a highly accomplished professional translator, demonstrating profound pr
   {
     name: 'Summarize the meeting',
     action: 'Summarize the meeting',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -752,7 +752,7 @@ You are an assistant helping summarize a document. Use this format, replacing te
   {
     name: 'Find action for summary',
     action: 'Find action for summary',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -774,7 +774,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write an article about this',
     action: 'Write an article about this',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -829,7 +829,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a twitter about this',
     action: 'Write a twitter about this',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -866,7 +866,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a poem about this',
     action: 'Write a poem about this',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -915,7 +915,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write a blog post about this',
     action: 'Write a blog post about this',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -966,7 +966,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Write outline',
     action: 'Write outline',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1005,7 +1005,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Change tone to',
     action: 'Change tone',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1040,7 +1040,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Brainstorm ideas about this',
     action: 'Brainstorm ideas about this',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1096,7 +1096,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Brainstorm mindmap',
     action: 'Brainstorm mindmap',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1113,7 +1113,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Expand mind map',
     action: 'Expand mind map',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1134,7 +1134,7 @@ You are an assistant helping find actions of meeting summary. Use this format, r
   {
     name: 'Improve writing for it',
     action: 'Improve writing for it',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1190,7 +1190,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Improve grammar for it',
     action: 'Improve grammar for it',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1206,7 +1206,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Fix spelling for it',
     action: 'Fix spelling for it',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1259,7 +1259,7 @@ The output must be perfect. Adherence to every detail of these instructions is n
   {
     name: 'Find action items from it',
     action: 'Find action items from it',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1283,7 +1283,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Check code error',
     action: 'Check code error',
-    model: 'gpt-4.1-2025-04-14',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1343,7 +1343,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Create a presentation',
     action: 'Create a presentation',
-    model: 'gpt-4o-2024-08-06',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1360,7 +1360,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Create headings',
     action: 'Create headings',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1392,7 +1392,7 @@ If there are items in the content that can be used as to-do tasks, please refer 
   {
     name: 'Make it real',
     action: 'Make it real',
-    model: 'claude-sonnet-4-5@20250929',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1433,7 +1433,7 @@ When sent new wireframes, respond ONLY with the contents of the html file.`,
   {
     name: 'Make it real with text',
     action: 'Make it real with text',
-    model: 'claude-sonnet-4-5@20250929',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1468,7 +1468,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Make it longer',
     action: 'Make it longer',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1493,7 +1493,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Make it shorter',
     action: 'Make it shorter',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1518,7 +1518,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Continue writing',
     action: 'Continue writing',
-    model: 'gemini-2.5-flash',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -1550,7 +1550,7 @@ When sent new notes, respond ONLY with the contents of the html file.`,
   {
     name: 'Section Edit',
     action: 'Section Edit',
-    model: 'claude-sonnet-4@20250514',
+    model: 'claude-sonnet-4-20250514',
     messages: [
       {
         role: 'system',
@@ -1714,7 +1714,7 @@ const modelActions: Prompt[] = [
   {
     name: 'Apply Updates',
     action: 'Apply Updates',
-    model: 'claude-sonnet-4-5@20250929',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'user',
@@ -1870,7 +1870,7 @@ Now apply the \`updates\` to the \`content\`, following the intent in \`op\`, an
   },
   {
     name: 'Code Artifact',
-    model: 'claude-sonnet-4-5@20250929',
+    model: 'claude-sonnet-4-5-20250929',
     messages: [
       {
         role: 'system',
@@ -2091,6 +2091,7 @@ Below is the user's query. Please respond in the user's preferred language witho
       'docSemanticSearch',
       'webSearch',
       'docCompose',
+      'databaseCreate',
       'codeArtifact',
       'blobRead',
     ],
