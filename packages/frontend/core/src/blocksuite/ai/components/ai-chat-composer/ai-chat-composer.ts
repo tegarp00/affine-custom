@@ -678,7 +678,7 @@ export class AIChatComposer extends SignalWatcher(
 
   private readonly pollContextDocsAndFiles = async () => {
     const sessionId = this.session?.sessionId;
-    const contextId = await this._getContextId();
+    const contextId = await this.createContextId();
     if (!sessionId || !contextId || !AIProvider.context) {
       return;
     }
