@@ -775,6 +775,11 @@ export class AIChatComposer extends SignalWatcher(
       if (isTagChip(chip) || isCollectionChip(chip)) {
         return chip;
       }
+      // Don't update file chips that are already finished - they were set immediately
+      // when uploaded and embedding happens async in the background
+      if (isFileChip(chip) && chip.state === 'finished') {
+        return chip;
+      }
       const id = isDocChip(chip)
         ? chip.docId
         : isFileChip(chip)
