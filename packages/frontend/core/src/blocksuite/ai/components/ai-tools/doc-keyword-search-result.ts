@@ -51,25 +51,25 @@ export class DocKeywordSearchResult extends WithDisposable(ShadowlessElement) {
     if (this.data.type !== 'tool-result') {
       return nothing;
     }
-    let results: ToolResult[] = [];
-    try {
-      results = this.data.result.map(item => ({
-        title: item.title,
-        icon: PageIcon(),
-        onClick: () => {
-          this.peekViewService.peekView
-            .open({
-              type: 'doc',
-              docRef: { docId: item.docId },
-            })
-            .catch(console.error);
-        },
-      }));
-    } catch (err) {
-      console.error('Failed to parse result', err);
-    }
+
+    // Handle case where result is not an array (e.g., error object or null)
+    const resultArray = Array.isArray(this.data.result) ? this.data.result : [];
+
+    const results: ToolResult[] = resultArray.map(item => ({
+      title: item.title,
+      icon: PageIcon(),
+      onClick: () => {
+        this.peekViewService.peekView
+          .open({
+            type: 'doc',
+            docRef: { docId: item.docId },
+          })
+          .catch(console.error);
+      },
+    }));
+
     return html`<tool-result-card
-      .name=${`Found ${this.data.result.length} pages for "${this.data.args.query}"`}
+      .name=${`Found ${resultArray.length} pages for "${this.data.args.query}"`}
       .icon=${SearchIcon()}
       .width=${this.width}
       .results=${results}

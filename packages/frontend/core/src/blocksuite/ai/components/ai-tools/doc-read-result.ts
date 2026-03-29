@@ -49,18 +49,30 @@ export class DocReadResult extends WithDisposable(ShadowlessElement) {
     if (this.data.type !== 'tool-result') {
       return nothing;
     }
+
+    // Handle case where result is not the expected object format
+    const result = this.data.result;
+    if (
+      !result ||
+      typeof result !== 'object' ||
+      !('title' in result) ||
+      !('markdown' in result)
+    ) {
+      return nothing;
+    }
+
     // TODO: better markdown rendering
     return html`<tool-result-card
-      .name=${`Read "${this.data.result.title}"`}
+      .name=${`Read "${result.title}"`}
       .icon=${ViewIcon()}
       .width=${this.width}
       .results=${[
         {
-          title: this.data.result.title,
+          title: result.title,
           icon: PageIcon(),
-          content: this.data.result.markdown,
+          content: result.markdown,
           onClick: () => {
-            const docId = (this.data as DocReadToolResult).result.docId;
+            const docId = result.docId;
             if (!docId) {
               return;
             }
