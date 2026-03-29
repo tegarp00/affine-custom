@@ -93,12 +93,20 @@ export class CopilotContextModel extends BaseModel {
     blobs: ContextBlob[]
   ): Promise<ContextBlob[]> {
     const canEmbedding = await this.checkEmbeddingAvailable();
-    const finishedBlobs = canEmbedding
-      ? await this.listWorkspaceBlobEmbedding(
-          workspaceId,
-          Array.from(new Set(blobs.map(blob => blob.id)))
-        )
-      : [];
+
+    if (!canEmbedding) {
+      // When embedding is not available, mark all as finished
+      // since embedding is not applicable
+      for (const blob of blobs) {
+        blob.status = blob.status || ContextEmbedStatus.finished;
+      }
+      return blobs;
+    }
+
+    const finishedBlobs = await this.listWorkspaceBlobEmbedding(
+      workspaceId,
+      Array.from(new Set(blobs.map(blob => blob.id)))
+    );
     const finishedBlobSet = new Set(finishedBlobs);
 
     for (const blob of blobs) {
@@ -115,12 +123,20 @@ export class CopilotContextModel extends BaseModel {
 
   async mergeDocStatus(workspaceId: string, docs: ContextDoc[]) {
     const canEmbedding = await this.checkEmbeddingAvailable();
-    const finishedDoc = canEmbedding
-      ? await this.listWorkspaceDocEmbedding(
-          workspaceId,
-          Array.from(new Set(docs.map(doc => doc.id)))
-        )
-      : [];
+
+    if (!canEmbedding) {
+      // When embedding is not available, mark all as finished
+      // since embedding is not applicable
+      for (const doc of docs) {
+        doc.status = doc.status || ContextEmbedStatus.finished;
+      }
+      return docs;
+    }
+
+    const finishedDoc = await this.listWorkspaceDocEmbedding(
+      workspaceId,
+      Array.from(new Set(docs.map(doc => doc.id)))
+    );
     const finishedDocSet = new Set(finishedDoc);
 
     for (const doc of docs) {
