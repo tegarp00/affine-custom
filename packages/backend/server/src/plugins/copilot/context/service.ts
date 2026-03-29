@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 
 import {
@@ -24,6 +24,7 @@ const CONTEXT_SESSION_KEY = 'context-session';
 export class CopilotContextService implements OnApplicationBootstrap {
   private supportEmbedding = false;
   private client: EmbeddingClient | undefined;
+  private readonly logger = new Logger(CopilotContextService.name);
 
   constructor(
     private readonly moduleRef: ModuleRef,
@@ -55,6 +56,16 @@ export class CopilotContextService implements OnApplicationBootstrap {
 
   get canEmbedding() {
     return this.supportEmbedding;
+  }
+
+  /**
+   * Check if embedding is fully available (DB tables exist AND provider is configured).
+   * Use this to determine whether items should show 'processing' or 'finished' status.
+   */
+  async isEmbeddingFullyAvailable(): Promise<boolean> {
+    if (!this.supportEmbedding) return false;
+    if (!this.client) return false;
+    return this.client.configured();
   }
 
   // public this client to allow overriding in tests
@@ -125,9 +136,8 @@ export class CopilotContextService implements OnApplicationBootstrap {
 
   async get(id: string): Promise<ContextSession> {
     if (!this.embeddingClient) {
-      throw new NoCopilotProviderAvailable(
-        { modelId: 'embedding' },
-        'embedding client not configured'
+      this.logger.warn(
+        'Embedding client not configured. Context search/read will be unavailable.'
       );
     }
 

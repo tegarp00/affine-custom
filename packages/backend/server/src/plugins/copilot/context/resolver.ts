@@ -431,10 +431,18 @@ export class CopilotContextResolver {
     }
     const session = await this.context.get(context.id);
     const collections = session.collections;
-    await this.models.copilotContext.mergeDocStatus(
-      session.workspaceId,
-      collections.flatMap(c => c.docs)
-    );
+    const embeddingAvailable = await this.context.isEmbeddingFullyAvailable();
+    if (embeddingAvailable) {
+      await this.models.copilotContext.mergeDocStatus(
+        session.workspaceId,
+        collections.flatMap(c => c.docs)
+      );
+    } else {
+      // No embedding provider - mark all docs as finished
+      for (const doc of collections.flatMap(c => c.docs)) {
+        doc.status = doc.status || ContextEmbedStatus.finished;
+      }
+    }
 
     return collections;
   }
@@ -451,10 +459,17 @@ export class CopilotContextResolver {
     }
     const session = await this.context.get(context.id);
     const tags = session.tags;
-    await this.models.copilotContext.mergeDocStatus(
-      session.workspaceId,
-      tags.flatMap(c => c.docs)
-    );
+    const embeddingAvailable = await this.context.isEmbeddingFullyAvailable();
+    if (embeddingAvailable) {
+      await this.models.copilotContext.mergeDocStatus(
+        session.workspaceId,
+        tags.flatMap(c => c.docs)
+      );
+    } else {
+      for (const doc of tags.flatMap(c => c.docs)) {
+        doc.status = doc.status || ContextEmbedStatus.finished;
+      }
+    }
 
     return tags;
   }
@@ -471,10 +486,17 @@ export class CopilotContextResolver {
     }
     const session = await this.context.get(context.id);
     const blobs = session.blobs;
-    await this.models.copilotContext.mergeBlobStatus(
-      session.workspaceId,
-      blobs
-    );
+    const embeddingAvailable = await this.context.isEmbeddingFullyAvailable();
+    if (embeddingAvailable) {
+      await this.models.copilotContext.mergeBlobStatus(
+        session.workspaceId,
+        blobs
+      );
+    } else {
+      for (const blob of blobs) {
+        blob.status = blob.status || ContextEmbedStatus.finished;
+      }
+    }
 
     return blobs.map(blob => ({ ...blob, status: blob.status || null }));
   }
@@ -491,7 +513,17 @@ export class CopilotContextResolver {
     }
     const session = await this.context.get(context.id);
     const docs = session.docs;
-    await this.models.copilotContext.mergeDocStatus(session.workspaceId, docs);
+    const embeddingAvailable = await this.context.isEmbeddingFullyAvailable();
+    if (embeddingAvailable) {
+      await this.models.copilotContext.mergeDocStatus(
+        session.workspaceId,
+        docs
+      );
+    } else {
+      for (const doc of docs) {
+        doc.status = doc.status || ContextEmbedStatus.finished;
+      }
+    }
 
     return docs.map(doc => ({ ...doc, status: doc.status || null }));
   }
