@@ -418,7 +418,11 @@ export class AIChatComposer extends SignalWatcher(
     }
     this.updateChips([...this.chips, chip]);
     await this.addToContext(chip);
-    await this.pollContextDocsAndFiles();
+    // Only poll for docs/tags/collections, not files
+    // Files are set to 'finished' immediately and don't need polling
+    if (!isFileChip(chip)) {
+      await this.pollContextDocsAndFiles();
+    }
   };
 
   private readonly removeChip = async (chip: ChatChip) => {
