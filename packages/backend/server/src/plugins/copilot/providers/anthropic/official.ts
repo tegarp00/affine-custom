@@ -63,6 +63,19 @@ export class AnthropicOfficialProvider extends AnthropicProvider<AnthropicOffici
     this.instance = createAnthropic({
       apiKey: this.config.apiKey,
       baseURL: this.config.baseURL,
+      // Use longer timeout for custom proxies that may be slower
+      fetch: async (url, init) => {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 120_000); // 2 min
+        try {
+          return await globalThis.fetch(url, {
+            ...init,
+            signal: init?.signal ?? controller.signal,
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
+      },
     });
   }
 

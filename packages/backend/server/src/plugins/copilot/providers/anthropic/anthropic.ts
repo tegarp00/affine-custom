@@ -74,6 +74,7 @@ export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
         },
         tools: await this.getTools(options, model.id),
         stopWhen: stepCountIs(this.MAX_STEPS),
+        maxRetries: 5,
       });
 
       if (!text) throw new Error('Failed to generate text');
@@ -167,6 +168,7 @@ export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
       },
       tools: await this.getTools(options, model.id),
       stopWhen: stepCountIs(this.MAX_STEPS),
+      maxRetries: 5,
     });
     return fullStream;
   }
