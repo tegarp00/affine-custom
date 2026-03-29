@@ -2136,7 +2136,7 @@ export async function refreshPrompts(db: PrismaClient) {
     // skip prompt update if already modified by admin panel
     if (needToSkip.includes(prompt.name)) {
       new Logger('CopilotPrompt').warn(`Skip modified prompt: ${prompt.name}`);
-      return;
+      continue;
     }
 
     await db.aiPrompt.upsert({
