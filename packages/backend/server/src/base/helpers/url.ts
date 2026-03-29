@@ -97,7 +97,10 @@ export class URLHelper {
   }
 
   url(path: string, query: Record<string, any> = {}) {
-    const url = new URL(path, this.requestOrigin);
+    // Use requestBaseUrl to ensure externalUrl is properly used
+    // If path is absolute (starts with /), new URL will use baseUrl as origin
+    const baseUrl = this.requestBaseUrl;
+    const url = new URL(path, baseUrl);
 
     for (const key in query) {
       url.searchParams.set(key, query[key]);

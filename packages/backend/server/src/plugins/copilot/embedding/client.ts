@@ -66,10 +66,22 @@ class ProductionEmbeddingClient extends EmbeddingClient {
   }
 
   async getEmbeddings(input: string[]): Promise<Embedding[]> {
-    const provider = await this.getProvider({
-      modelId: EMBEDDING_MODEL,
+    const embeddingModelId = this.config.copilot?.scenarios?.override_enabled
+      ? this.config.copilot.scenarios.scenarios?.embedding || EMBEDDING_MODEL
+      : EMBEDDING_MODEL;
+
+    const provider = await this.providerFactory.getProvider({
+      modelId: embeddingModelId,
       outputType: ModelOutputType.Embedding,
     });
+
+    if (!provider) {
+      this.logger.warn(
+        `Embedding provider not available for model ${embeddingModelId}. Skipping embedding.`
+      );
+      return [];
+    }
+
     this.logger.verbose(
       `Using provider ${provider.type} for embedding: ${input.join(', ')}`
     );

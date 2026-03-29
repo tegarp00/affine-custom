@@ -82,11 +82,15 @@ export class DocSemanticSearchResult extends WithDisposable(ShadowlessElement) {
     if (this.data.type !== 'tool-result') {
       return nothing;
     }
+
+    // Handle case where result is not an array (e.g., error object or null)
+    const results = Array.isArray(this.data.result) ? this.data.result : [];
+
     return html`<tool-result-card
       .name=${`Found semantically related pages for "${this.data.args.query}"`}
       .icon=${AiEmbeddingIcon()}
       .width=${this.width}
-      .results=${this.data.result
+      .results=${results
         .map(result => ({
           ...parseResultContent(result.content),
           title: this.docDisplayService.getTitle(result.docId),

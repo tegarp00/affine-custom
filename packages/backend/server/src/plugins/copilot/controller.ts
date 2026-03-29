@@ -333,7 +333,7 @@ export class CopilotController implements BeforeApplicationShutdown {
         ChatQuerySchema.parse(query);
 
       const source$ = from(
-        provider.streamText({ modelId: model }, finalMessage, {
+        provider.streamObject({ modelId: model }, finalMessage, {
           ...session.config.promptConfig,
           signal,
           user: user.id,
@@ -350,16 +350,20 @@ export class CopilotController implements BeforeApplicationShutdown {
             shared$.pipe(
               map(data => ({ type: 'message' as const, id: messageId, data }))
             ),
-            // save the generated text to the session
+            // save the generated text to the session with tool results
             shared$.pipe(
-              reduce((acc, chunk) => acc + chunk, ''),
-              tap(buffer => {
+              reduce((acc, chunk) => acc.concat([chunk]), [] as StreamObject[]),
+              tap(result => {
+                const parser = new StreamObjectParser();
+                const streamObjects = parser.mergeTextDelta(result);
+                const content = parser.mergeContent(streamObjects);
                 session.push({
                   role: 'assistant',
                   content: endBeforePromiseResolve
                     ? '> Request aborted'
-                    : buffer,
+                    : content,
                   createdAt: new Date(),
+                  streamObjects: endBeforePromiseResolve ? null : streamObjects,
                 });
                 void session
                   .save()
