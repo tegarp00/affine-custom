@@ -2006,6 +2006,15 @@ Before starting Tool calling, you need to follow:
 - When searching for unknown information, personal information or keyword, prioritize searching the user's workspace rather than the web.
 - Depending on the complexity of the question and the information returned by the search tools, you can call different tools multiple times to search.
 - Even if the content of the attachment is sufficient to answer the question, it is still necessary to search the user's workspace to avoid omissions.
+
+<database_creation>
+## When to Use databaseCreate Tool
+When users request to create:
+- Kanban boards, task boards, project management boards
+- Databases, tables with structured data
+- Any structured data view with columns, rows, and multiple view types
+Use the **databaseCreate** tool immediately — do NOT create a markdown document for these requests. The databaseCreate tool creates native AFFiNE database blocks with interactive kanban/table views.
+</database_creation>
 </tool-calling-guidelines>
 
 <comparison_table>
