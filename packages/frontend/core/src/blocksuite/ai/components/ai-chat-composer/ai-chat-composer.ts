@@ -520,8 +520,10 @@ export class AIChatComposer extends SignalWatcher(
       const contextFile = await AIProvider.context.addContextFile(chip.file, {
         contextId,
       });
+      // Set to finished immediately - embedding happens in background
+      // Polling will update if actual status differs
       this.updateChip(chip, {
-        state: contextFile.status,
+        state: 'finished',
         blobId: contextFile.blobId,
         fileId: contextFile.id,
       });
@@ -680,11 +682,6 @@ export class AIChatComposer extends SignalWatcher(
     const sessionId = this.session?.sessionId;
     const contextId = await this.createContextId();
     if (!sessionId || !contextId || !AIProvider.context) {
-      console.warn('[AI Chat] Skip polling:', {
-        sessionId,
-        contextId,
-        hasContext: !!AIProvider.context,
-      });
       return;
     }
     if (this._pollAbortController) {
@@ -692,7 +689,6 @@ export class AIChatComposer extends SignalWatcher(
       this._abortPoll();
     }
     this._pollAbortController = new AbortController();
-    console.log('[AI Chat] Start polling context docs and files');
     await AIProvider.context.pollContextDocsAndFiles(
       this.workspaceId,
       sessionId,
@@ -734,9 +730,7 @@ export class AIChatComposer extends SignalWatcher(
   private readonly _onPoll = (
     result?: BlockSuitePresets.AIDocsAndFilesContext
   ) => {
-    console.log('[AI Chat] Poll result:', result);
     if (!result) {
-      console.log('[AI Chat] Poll result empty, aborting');
       this._abortPoll();
       return;
     }
@@ -788,11 +782,6 @@ export class AIChatComposer extends SignalWatcher(
               : undefined;
       const item = id && hashMap.get(id);
       if (item && item.status) {
-        console.log('[AI Chat] Update chip status:', {
-          chipId: id,
-          oldState: chip.state,
-          newState: item.status,
-        });
         return {
           ...chip,
           state: item.status,
@@ -801,11 +790,9 @@ export class AIChatComposer extends SignalWatcher(
       }
       return chip;
     });
-    console.log('[AI Chat] Poll count:', count);
     this.updateChips(nextChips);
     this.onEmbeddingProgressChange?.(count);
     if (count.processing === 0) {
-      console.log('[AI Chat] No more processing chips, stop polling');
       this._abortPoll();
     }
   };
