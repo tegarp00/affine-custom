@@ -57,7 +57,18 @@ export function getTools(
   tools?: PromptTools | null,
   toolsConfig?: ToolsConfig
 ) {
-  if (!tools || !toolsConfig) {
+  // Set default tools for chat if not specified
+  if (!tools) {
+    tools = [
+      'docRead',
+      'docEdit',
+      'sectionEdit',
+      'docCompose',
+      'databaseCreate',
+      'webSearch',
+    ];
+  }
+  if (!toolsConfig) {
     return tools;
   }
   let result: PromptTools = tools;
