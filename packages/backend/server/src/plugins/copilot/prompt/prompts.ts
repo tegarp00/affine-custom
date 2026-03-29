@@ -2095,6 +2095,7 @@ Below is the user's query. Please respond in the user's preferred language witho
   config: {
     tools: [
       'docRead',
+      'docEdit',
       'sectionEdit',
       'docKeywordSearch',
       'docSemanticSearch',
