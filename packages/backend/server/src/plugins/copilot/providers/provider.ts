@@ -24,6 +24,7 @@ import {
   createBlobReadTool,
   createCodeArtifactTool,
   createConversationSummaryTool,
+  createDatabaseCreateTool,
   createDocComposeTool,
   createDocEditTool,
   createDocKeywordSearchTool,
@@ -251,6 +252,10 @@ export abstract class CopilotProvider<C = any> {
           }
           case 'docCompose': {
             tools.doc_compose = createDocComposeTool(prompt, this.factory);
+            break;
+          }
+          case 'databaseCreate': {
+            tools.database_create = createDatabaseCreateTool();
             break;
           }
           case 'sectionEdit': {

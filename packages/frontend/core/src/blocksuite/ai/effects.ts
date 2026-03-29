@@ -59,6 +59,7 @@ import {
   CodeArtifactTool,
   CodeHighlighter,
 } from './components/ai-tools/code-artifact';
+import { DatabaseCreateTool } from './components/ai-tools/database-create';
 import { DocComposeTool } from './components/ai-tools/doc-compose';
 import { DocEditTool } from './components/ai-tools/doc-edit';
 import { DocKeywordSearchResult } from './components/ai-tools/doc-keyword-search-result';
@@ -226,6 +227,7 @@ export function registerAIEffects() {
   customElements.define('web-search-tool', WebSearchTool);
   customElements.define('section-edit-tool', SectionEditTool);
   customElements.define('doc-compose-tool', DocComposeTool);
+  customElements.define('database-create-tool', DatabaseCreateTool);
   customElements.define('code-artifact-tool', CodeArtifactTool);
   customElements.define('code-highlighter', CodeHighlighter);
   customElements.define('artifact-preview-panel', ArtifactPreviewPanel);

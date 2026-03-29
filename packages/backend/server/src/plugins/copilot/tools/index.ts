@@ -3,6 +3,7 @@ import { ToolSet } from 'ai';
 import { createBlobReadTool } from './blob-read';
 import { createCodeArtifactTool } from './code-artifact';
 import { createConversationSummaryTool } from './conversation-summary';
+import { createDatabaseCreateTool } from './database-create';
 import { createDocComposeTool } from './doc-compose';
 import { createDocEditTool } from './doc-edit';
 import { createDocKeywordSearchTool } from './doc-keyword-search';
@@ -16,6 +17,7 @@ export interface CustomAITools extends ToolSet {
   blob_read: ReturnType<typeof createBlobReadTool>;
   code_artifact: ReturnType<typeof createCodeArtifactTool>;
   conversation_summary: ReturnType<typeof createConversationSummaryTool>;
+  database_create: ReturnType<typeof createDatabaseCreateTool>;
   doc_edit: ReturnType<typeof createDocEditTool>;
   doc_semantic_search: ReturnType<typeof createDocSemanticSearchTool>;
   doc_keyword_search: ReturnType<typeof createDocKeywordSearchTool>;
@@ -29,6 +31,7 @@ export interface CustomAITools extends ToolSet {
 export * from './blob-read';
 export * from './code-artifact';
 export * from './conversation-summary';
+export * from './database-create';
 export * from './doc-compose';
 export * from './doc-edit';
 export * from './doc-keyword-search';

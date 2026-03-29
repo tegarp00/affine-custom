@@ -73,6 +73,8 @@ export const PromptToolsSchema = z
     'webSearch',
     // artifact tools
     'docCompose',
+    // database tools
+    'databaseCreate',
     // section editing
     'sectionEdit',
   ])

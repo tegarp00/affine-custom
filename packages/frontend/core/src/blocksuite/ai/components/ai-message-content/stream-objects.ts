@@ -98,6 +98,16 @@ export class ChatContentStreamObjects extends WithDisposable(
             .notificationService=${this.notificationService}
           ></doc-compose-tool>
         `;
+      case 'database_create':
+        return html`
+          <database-create-tool
+            .std=${this.std || this.host?.std}
+            .data=${streamObject}
+            .width=${this.width}
+            .theme=${this.theme}
+            .notificationService=${this.notificationService}
+          ></database-create-tool>
+        `;
       case 'code_artifact':
         return html`
           <code-artifact-tool
@@ -181,6 +191,16 @@ export class ChatContentStreamObjects extends WithDisposable(
             .theme=${this.theme}
             .notificationService=${this.notificationService}
           ></doc-compose-tool>
+        `;
+      case 'database_create':
+        return html`
+          <database-create-tool
+            .std=${this.std || this.host?.std}
+            .data=${streamObject}
+            .width=${this.width}
+            .theme=${this.theme}
+            .notificationService=${this.notificationService}
+          ></database-create-tool>
         `;
       case 'code_artifact':
         return html`
