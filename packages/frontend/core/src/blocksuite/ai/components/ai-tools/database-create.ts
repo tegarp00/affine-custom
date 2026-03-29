@@ -1,7 +1,7 @@
 import type { ColorScheme } from '@blocksuite/affine/model';
 import { unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
 import type { NotificationService } from '@blocksuite/affine-shared/services';
-import { DataTableIcon, PageIcon, ToolIcon } from '@blocksuite/icons/lit';
+import { PageIcon, ToolIcon } from '@blocksuite/icons/lit';
 import type { BlockStdScope } from '@blocksuite/std';
 import { css, html } from 'lit';
 import { property } from 'lit/decorators.js';
@@ -148,7 +148,7 @@ export class DatabaseCreateTool extends ArtifactTool<
   }
 
   protected override getIcon() {
-    return DataTableIcon();
+    return PageIcon();
   }
 
   protected override getPreviewContent() {
@@ -263,7 +263,7 @@ export class DatabaseCreateTool extends ArtifactTool<
 
         // Dynamically import DatabaseBlockDataSource
         const { DatabaseBlockDataSource } = await import(
-          '@blocksuite/affine/database-block'
+          '@blocksuite/affine/blocks/database'
         );
         const datasource = new DatabaseBlockDataSource(databaseBlock.model);
 
@@ -276,13 +276,8 @@ export class DatabaseCreateTool extends ArtifactTool<
         }
 
         // Add view (table or kanban)
-        if (spec.viewType === 'kanban') {
-          const { viewPresets } = await import('@blocksuite/affine/data-view');
-          const kanbanType = viewPresets.kanbanViewMeta?.type || 'kanban';
-          datasource.viewManager.viewAdd(kanbanType);
-        } else {
-          datasource.viewManager.viewAdd('table');
-        }
+        const viewType = spec.viewType === 'kanban' ? 'kanban' : 'table';
+        datasource.viewManager.viewAdd(viewType);
 
         // Populate rows if provided
         if (spec.rows && spec.rows.length > 0) {
